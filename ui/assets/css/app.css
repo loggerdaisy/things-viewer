@@ -1,0 +1,62 @@
+body {
+    font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+header, .section-primary {
+    background-color: #5E3B7C;
+}
+
+header .title, header .subtitle, header .disclaimer {
+    color: #ffffff;
+    font-family: 'Roboto', 'Helvetica', sans-serif;
+    font-weight: 100;
+}
+
+footer{
+    font-weight: 100;
+}
+
+h1, h2, h3, th
+{
+    font-weight: 100;
+}
+
+.breadcrumbs *
+{
+    font-weight: 700 !important;
+    text-transform: uppercase;
+}
+
+.breadcrumbs a
+{
+    color: #efefef;
+}
+
+.tooltip {
+    border: none;
+}
+
+.chart {
+    width: 100%;
+    min-height: 300px !important;
+}
+
+.bg-loggerdaisy {
+    background-color: #5E3B7C;
+}
+
+.text-white {
+    color: #ffffff;
+}
+
+.centered {
+    text-align: center;
+}
+
+.justified {
+    text-align: justify;
+}
+
+.temp-border {
+    border: 1px dotted #ffaacc;
+}

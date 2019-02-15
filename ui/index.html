@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LoggerDaisy Things Viewer</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="https://unpkg.com/mustard-ui@latest/dist/css/mustard-ui.min.css">
+
+    <link rel="stylesheet" href="/ui/css/app.css">
+
+    {{{base_path}}}
+</head>
+<body>
+
+
+<header>
+    <h1 class="title">LoggerDaisy Things Viewer</h1>
+    <h2 class="subtitle">Visualize your sensors from anywhere</h2>
+    <p class="disclaimer">At this moment available in testing mode</p>
+    <button class="get-started button button-primary button-large" id="buttonView">View Devices</button>
+
+    <a class="scroll-down" href="#"></a>
+</header>
+
+{{> footer}}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function ()
+    {
+
+        /*$('.scroll-down, .get-started').on('click', (e) =>
+        {
+            e.preventDefault();
+            $('html, body').animate({
+                scrollTop: $('section:first-of-type').offset().top
+            }, 300);
+        });*/
+
+        $('#buttonView').on('click', e =>
+        {
+            document.location = '/devices';
+        });
+
+    });
+</script>
+</body>
+</html>

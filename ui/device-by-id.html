@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LoggerDaisy Things Viewer - Device: {{title}}</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,300i,700,700i" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/mustard-ui@latest/dist/css/mustard-ui.min.css">
+
+    <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+          crossorigin="anonymous">-->
+    <link rel="stylesheet" href="/ui/css/app.css">
+
+    {{{base_path}}}
+</head>
+<body>
+
+<section class="section-primary">
+    <div class="container">
+        <div class="row">
+            <div class="col"><h1 class="text-white">LoggerDaisy Things Viewer - Device:{{title}}</h1></div>
+        </div>
+        <div class="row">
+            <ul class="breadcrumbs">
+                <li><a href="/">Home</a></li>
+                <li><a href="/devices">Devices</a></li>
+                <li class="text-white">{{title}}</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+
+        <div class="row">
+            {{#each sensors}}
+                <div class="col col-md-6">
+                    <div class="card"><!--
+                        <h3 class="card-title">{{this}}</h3>-->
+                        <div id="chart-{{this}}" class="chart"></div>
+                        <div>
+                            <table style="width: 100%">
+                                <tr>
+                                    <th class="centered">Min</th>
+                                    <th class="centered">Avg</th>
+                                    <th class="centered">Max</th>
+                                </tr>
+                                <tbody>
+                                <tr>
+                                    <td class="centered" data-id="cell-{{this}}-min"></td>
+                                    <td class="centered" data-id="cell-{{this}}-avg"></td>
+                                    <td class="centered" data-id="cell-{{this}}-max"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+
+    </div>
+</section>
+
+{{> footer}}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+<script>
+    let app = {
+        utils: {
+            randomData: () =>
+            {
+                let data = [];
+                for (let i = 0; i < 3000; i++)
+                {
+                    let value = Number((Math.random() * 100).toFixed(2));
+                    let date = moment().add(i, 'd');
+                    let item = {
+                        value: value,
+                        date: date.format('YYYY-MM-DD'),
+                        l: value - Number((Math.random() * 40).toFixed(2)),
+                        u: value + Number((Math.random() * 20).toFixed(2))
+                    };
+
+                    data.push(item);
+                }
+                return data;
+            },
+
+            dataById: (id) =>
+            {
+                return app.data[id];
+            },
+
+            renderChart: (id) =>
+            {
+                const data = app.utils.dataById(id);
+
+                let chart = echarts.init(document.getElementById('chart-' + id));
+
+                const valuesArray = data.map(el => el.value);
+
+                $('td[data-id="cell-' + id + '-min"]').html(Math.min.apply(null, valuesArray));
+                $('td[data-id="cell-' + id + '-max"]').html(Math.max.apply(null, valuesArray));
+                $('td[data-id="cell-' + id + '-avg"]').html(Number(valuesArray.reduce((a, b) => a + b, 0) / valuesArray.length).toFixed(2));
+
+                chart.on('finished', () =>
+                {
+
+                });
+
+                let base = -data.reduce(function (min, val)
+                {
+                    return Math.floor(Math.min(min, val.l));
+                }, Infinity);
+
+                let option = {
+                    title: {
+                        text: `${id}, ${app.sensorRanges[id].unit}`,
+                        subtext: `from ${app.sensorRanges[id].min} to  ${app.sensorRanges[id].max} ${app.sensorRanges[id].unit}`,
+                        left: 'center',
+                        textStyle: {
+                            fontFamily: 'Roboto'
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            dataZoom: {
+                                yAxisIndex: 'none'
+                            },
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            animation: true,
+                            label: {
+                                backgroundColor: '#ccc',
+                                borderColor: '#aaa',
+                                borderWidth: 1,
+                                shadowBlur: 0,
+                                shadowOffsetX: 0,
+                                shadowOffsetY: 0,
+                                textStyle: {
+                                    color: '#222'
+                                }
+                            }
+                        },
+                        formatter: function (params)
+                        {
+                            return params[2].name + '<br />' + params[0].value;
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: data.map(function (item)
+                        {
+                            return moment(item.date).format('YYYY-MM-DD hh:mm:ss');
+                        }),
+                        axisLine: {
+                            lineStyle: {
+                                color: '#5E3B7C'
+                            }
+                        },
+                        axisLabel: {
+                            fontFamily: 'Roboto',
+                            formatter: function (value, idx)
+                            {
+                                let date = moment(value);
+                                return date.format('MM/DD hh:mm');
+                            }
+                        },
+                        splitLine: {
+                            show: false
+                        },
+                        boundaryGap: false
+                    },
+                    yAxis: {
+                        type: 'value',
+                        min: app.sensorRanges[id].min,
+                        max: app.sensorRanges[id].max,
+                        axisLabel: {
+                            fontFamily: 'Roboto',
+                            formatter: '{value}'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#5E3B7C'
+                            }
+                        },
+                        axisPointer: {
+                            label: {
+                                formatter: (p) =>
+                                {
+                                    return p.value.toFixed(0);
+                                }
+                            }
+                        }
+                    },
+                    dataZoom: [
+                        {
+                            type: 'slider',
+                            show: true,
+                            realtime: true,
+                            start: 95,
+                            end: 100
+                        },
+                        {
+                            type: 'inside',
+                            realtime: true,
+                            start: 95,
+                            end: 100
+                        }
+                    ],
+                    /*visualMap: {
+                        top: 10,
+                        right: 10,
+                        pieces: [{
+                            gt: 0,
+                            lte: 50,
+                            color: '#096'
+                        }, {
+                            gt: 100,
+                            lte: 150,
+                            color: '#ff9933'
+                        }, {
+                            gt: 150,
+                            lte: 200,
+                            color: '#cc0033'
+                        }],
+                        outOfRange: {
+                            color: '#999'
+                        }
+                    },*/
+                    series: [
+                        {
+                            name: id,
+                            type: 'line',
+                            data: data.map((item) =>
+                            {
+                                return item.value;
+                            }),
+                            /*markLine: {
+                                silent: true,
+                                label: {
+                                    position: 'end'
+                                },
+                                data: [
+                                    {
+                                        name: 'Minimal reading',
+                                        yAxis: Math.min.apply(null, data.map(el => el.value))
+                                    },
+                                    {
+                                        name: 'Maximal reading',
+                                        yAxis: Math.max.apply(null, data.map(el => el.value))
+                                    }],
+                                lineStyle: {
+                                    color: '#666666'
+                                }
+                            },*/
+                            hoverAnimation: true,
+                            symbolSize: 6,
+                            itemStyle: {
+                                normal: {
+                                    color: '#50BFE6'
+                                }
+                            }
+                        },
+
+                        {
+                            name: 'L',
+                            type: 'line',
+                            data: data.map((item) =>
+                            {
+                                return item.l;
+                            }),
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0
+                                }
+                            },
+                            stack: 'confidence-band',
+                            symbol: 'none'
+                        },
+
+                        {
+                            name: 'U',
+                            type: 'line',
+                            data: data.map(function (item)
+                            {
+                                return item.u - item.l;
+                            }),
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0
+                                }
+                            },
+                            areaStyle: {
+                                normal: {
+                                    color: '#AAF0D1'
+                                }
+                            },
+                            stack: 'confidence-band',
+                            symbol: 'none'
+                        }
+                    ]
+                };
+
+// use configuration item and data specified to show chart
+                chart.setOption(option);
+            }
+        },
+
+        sensors: {{{JSONstringify sensors}}},
+        sensorRanges: {{{JSONstringify sensorRanges}}},
+        data: {{{JSONstringify data}}}
+    };
+
+    $(() =>
+    {
+        for (let i = 0; i < app.sensors.length; i++)
+        {
+            app.utils.renderChart(app.sensors[i]);
+        }
+    });
+</script>
+</body>
+</html>

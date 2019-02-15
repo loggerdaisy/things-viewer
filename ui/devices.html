@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LoggerDaisy Things Viewer - {{title}}</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="https://unpkg.com/mustard-ui@latest/dist/css/mustard-ui.min.css">
+
+    <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+          crossorigin="anonymous">-->
+    <link rel="stylesheet" href="/ui/css/app.css">
+
+    {{{base_path}}}
+</head>
+<body>
+
+<section class="section-primary">
+    <div class="container">
+        <div class="row">
+            <div class="col"><h1 class="text-white">LoggerDaisy Things Viewer - {{title}}</h1></div>
+        </div>
+        <div class="row">
+            <ul class="breadcrumbs">
+                <li><a href="/">Home</a></li>
+                <li><a href="/devices">Devices</a></li>
+                <li class="text-white">Browse</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col">{{devices.length}} items found</div>
+        </div>
+
+        <div class="pricing-table row">
+            {{#each devices}}
+                <div class="col col-md-6 col-lg-4">
+                    <div class="package">
+                        <p class="package-name">{{this.id}}</p>
+                        <p class="disclaimer">{{this.description}}</p>
+                        <hr>
+                        <p class="price">{{this.sensors.length}}</p>
+                        <p class="disclaimer">metrics</p>
+                        <hr>
+                        <ul class="features">
+                            {{#each this.sensors}}
+                                <!--
+
+                        <li><span class="tooltip">{{this.name}}<span class="tooltip-text">{{this.range.min}}/{{this.range.max}} {{this.range.unit}}</span></span></li>
+-->
+
+                                <li>{{this.name}}</li>
+                            {{/each}}
+                        </ul>
+                        <a class="button-primary button-large" href="/devices/{{this.id}}">View</a>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</section>
+
+{{> footer}}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function ()
+    {
+
+    });
+</script>
+</body>
+</html>
