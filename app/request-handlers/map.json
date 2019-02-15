@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "handlers": [
+    {
+      "path": "/",
+      "handler": "index"
+    },
+    {
+      "path": "/devices",
+      "handler": "devices"
+    },
+    {
+      "path": "/devices/:deviceId",
+      "handler": "device-by-id"
+    },
+    {
+      "path": "/status",
+      "handler": "status"
+    }
+  ]
+}
