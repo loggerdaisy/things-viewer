@@ -71,7 +71,7 @@ let result = {temperature: 25.50, humidity: 34.00, co2: 400};
 log.info('Storing sensor readings on server...');
 request({
     url: `http://things.loggerdaisy.com/api/csv?temperature=${result.temperature}&humidity=${result.humidity}&co2=${result.co2}`,
-    headers: {'X-Device-ID': 'ld-ht2000-01'}
+    headers: {'X-Device-ID': 'device-id-or-mac'}
 }).then(body =>
 {
     try
